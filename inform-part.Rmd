@@ -1,0 +1,1074 @@
+---
+title: "Firm Formalization and Electoral Participation -- Analyses and Replication Materials"
+author: "Catarina Roman"
+date: \today
+output: pdf_document
+---
+
+```{r}
+library(dplyr)
+library(tidyr)
+spallest <- read.csv("spallest.csv")
+```
+
+I will have to make 2 splits of the data (2 different panels): one for the intervals between federal/state elections and one for municipal elections.
+
+The way to split up the analyses and make them tractable at first is splitting between states, and then unifying at the end. I will start with SP.
+
+
+```{r}
+# loading election result datasets
+
+# municipal elections 
+spel00 <- read.csv2('election-results/detalhe_votacao_munzona_2000_BRASIL.csv')
+spel04 <- read.csv2('election-results/detalhe_votacao_munzona_2004_BRASIL.csv')
+spel08 <- read.csv2('election-results/detalhe_votacao_munzona_2008_BRASIL.csv')
+spel12 <- read.csv2('election-results/detalhe_votacao_munzona_2012_BRASIL.csv') 
+spel16 <- read.csv2('election-results/detalhe_votacao_munzona_2016_BRASIL.csv') 
+spel20 <- read.csv2('election-results/detalhe_votacao_munzona_2020_BRASIL.csv') 
+
+# federal and state elections
+spel02 <- read.csv2('election-results/detalhe_votacao_munzona_2002_BRASIL.csv')
+spel06 <- read.csv2('election-results/detalhe_votacao_munzona_2006_BRASIL.csv')
+spel10 <- read.csv2('election-results/detalhe_votacao_munzona_2010_BRASIL.csv')
+spel14 <- read.csv2('election-results/detalhe_votacao_munzona_2014_BRASIL.csv')
+spel18 <- read.csv2('election-results/detalhe_votacao_munzona_2018_BRASIL.csv')
+#spel22
+
+
+
+
+# Cleaning and splitting data between Executive and Legislative elections (split only necessary for null/blank votes -- turnout is the same across both since voters cast both ballots in one go)
+
+
+## Municipal Elections
+
+spel00 <- spel00 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel00p <- subset(spel00, spel00$DS_CARGO=="Prefeito")
+spel00v <- subset(spel00, spel00$DS_CARGO=="Vereador") 
+
+spel00p <- spel00p %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel00v <- spel00v %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+spel04 <- spel04 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel04p <- subset(spel04, spel04$DS_CARGO=="Prefeito")
+spel04v <- subset(spel04, spel04$DS_CARGO=="Vereador") 
+
+spel04p <- spel04p %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel04v <- spel04v %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+spel08 <- spel08 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel08p <- subset(spel08, spel08$DS_CARGO=="Prefeito")
+spel08v <- subset(spel08, spel08$DS_CARGO=="Vereador") 
+
+spel08p <- spel08p %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel08v <- spel08v %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+#2012
+
+spel12 <- spel12 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel12p <- subset(spel12, spel12$DS_CARGO=="Prefeito")
+spel12v <- subset(spel12, spel12$DS_CARGO=="Vereador") 
+
+spel12p <- spel12p %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel12v <- spel12v %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+#2016
+
+spel16 <- spel16 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel16p <- subset(spel16, spel16$DS_CARGO=="Prefeito")
+spel16v <- subset(spel16, spel16$DS_CARGO=="Vereador") 
+
+spel16p <- spel16p %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel16v <- spel16v %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+#2020
+
+spel20 <- spel20 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel20p <- subset(spel20, spel20$DS_CARGO=="Prefeito")
+spel20v <- subset(spel20, spel20$DS_CARGO=="Vereador") 
+
+spel20p <- spel20p %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel20v <- spel20v %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+## State Elections
+
+spel02 <- spel02 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel02g <- subset(spel02, spel02$DS_CARGO=="Governador")
+spel02de <- subset(spel02, spel02$DS_CARGO=="Deputado Estadual") 
+
+spel02g <- spel02g %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel02de <- spel02de %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel06 <- spel06 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel06g <- subset(spel06, spel06$DS_CARGO=="Governador")
+spel06de <- subset(spel06, spel06$DS_CARGO=="Deputado Estadual") 
+
+spel06g <- spel06g %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel06de <- spel06de %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+spel10 <- spel10 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel10g <- subset(spel10, spel10$DS_CARGO=="Governador")
+spel10de <- subset(spel10, spel10$DS_CARGO=="Deputado Estadual") 
+
+spel10g <- spel10g %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel10de <- spel10de %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+#2014
+
+spel14 <- spel14 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel14g <- subset(spel14, spel14$DS_CARGO=="Governador")
+spel14de <- subset(spel14, spel14$DS_CARGO=="Deputado Estadual") 
+
+spel14g <- spel14g %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel14de <- spel14de %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+
+#2018
+
+spel18 <- spel18 %>% subset(NR_TURNO == 1) %>% select(CD_MUNICIPIO, DS_CARGO, QT_APTOS, QT_COMPARECIMENTO, QT_ABSTENCOES, QT_VOTOS_BRANCOS, QT_VOTOS_NULOS)
+
+spel18g <- subset(spel18, spel18$DS_CARGO=="Governador")
+spel18de <- subset(spel18, spel18$DS_CARGO=="Deputado Estadual") 
+
+spel18g <- spel18g %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel18de <- spel18de %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+
+## Federal Elections
+
+spel02s <- subset(spel02, spel02$DS_CARGO=="Senador")
+spel02df <- subset(spel02, spel02$DS_CARGO=="Deputado Federal") 
+
+spel02s <- spel02s %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel02df <- spel02df %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+spel06s <- subset(spel06, spel06$DS_CARGO=="Senador")
+spel06df <- subset(spel06, spel06$DS_CARGO=="Deputado Federal") 
+
+spel06s <- spel06s %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel06df <- spel06df %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel10s <- subset(spel10, spel10$DS_CARGO=="Senador")
+spel10df <- subset(spel10, spel10$DS_CARGO=="Deputado Federal") 
+
+spel10s <- spel10s %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel10df <- spel10df %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+#2014
+
+spel14s <- subset(spel14, spel14$DS_CARGO=="Senador")
+spel14df <- subset(spel14, spel14$DS_CARGO=="Deputado Federal") 
+
+spel14s <- spel14s %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel14df <- spel14df %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+#2018
+
+spel18s <- subset(spel18, spel18$DS_CARGO=="Senador")
+spel18df <- subset(spel18, spel18$DS_CARGO=="Deputado Federal") 
+
+spel18s <- spel18s %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+spel18df <- spel18df %>% 
+  select(!DS_CARGO) %>% 
+  group_by(CD_MUNICIPIO) %>% 
+  summarise(across(everything(), sum))
+
+
+# V8 is codigo do municipio
+#V12 is cargo
+#V16 is QT_APTOS
+#V18 is comparecimento 
+#V19 is abstencoes 
+#V20 is votos nominais
+#V21 is brancos
+#V22 is nulos
+#V23 is legenda
+```    
+
+
+# BUILDING OUTCOME VARIABLES
+
+```{r}
+
+# Building OUTCOME variables
+
+
+## 2000
+
+
+# turnout and legislative non-votes
+spel00v <- spel00v %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonleg = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel00p <- spel00p %>% mutate(nonexec = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+## 2004
+
+# turnout and legislative non-votes
+spel04v <- spel04v %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonleg = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel04p <- spel04p %>% mutate(nonexec = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+## 2008
+
+# turnout and legislative non-votes
+spel08v <- spel08v %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonleg = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel08p <- spel08p %>% mutate(nonexec = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+## 2012
+
+# turnout and legislative non-votes
+spel12v <- spel12v %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonleg = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel12p <- spel12p %>% mutate(nonexec = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+## 2016
+
+# turnout and legislative non-votes
+spel16v <- spel16v %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonleg = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel16p <- spel16p %>% mutate(nonexec = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+## 2020
+
+# turnout and legislative non-votes
+spel20v <- spel20v %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonleg = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel20p <- spel20p %>% mutate(nonexec = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+## 2002
+
+# State Elections
+
+# turnout and legislative non-votes
+spel02de <- spel02de %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonde = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel02g <- spel02g %>% mutate(nong = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+# Federal Elections
+
+#lower chamber non-votes
+spel02df <- spel02df%>% mutate(nondf = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# upper chamber non-votes
+spel02s <- spel02s %>% mutate(nons = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+
+## 2006
+
+# State Elections
+
+# turnout and legislative non-votes
+spel06de <- spel06de %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonde = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel06g <- spel06g %>% mutate(nong = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+# Federal Elections
+
+#lower chamber non-votes
+spel06df <- spel06df%>% mutate(nondf = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# upper chamber non-votes
+spel06s <- spel06s %>% mutate(nons = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+## 2010
+
+# State Elections
+
+# turnout and legislative non-votes
+spel10de <- spel10de %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonde = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel10g <- spel10g %>% mutate(nong = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+# Federal Elections
+
+#lower chamber non-votes
+spel10df <- spel10df%>% mutate(nondf = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# upper chamber non-votes
+spel10s <- spel10s %>% mutate(nons = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+## 2014
+
+# State Elections
+
+# turnout and legislative non-votes
+spel14de <- spel14de %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonde = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel14g <- spel14g %>% mutate(nong = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+# Federal Elections
+
+#lower chamber non-votes
+spel14df <- spel14df %>% mutate(nondf = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# upper chamber non-votes
+spel14s <- spel14s %>% mutate(nons = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+## 2018
+
+# State Elections
+
+# turnout and legislative non-votes
+spel18de <- spel18de %>% mutate(turnout = QT_COMPARECIMENTO/QT_APTOS) %>% mutate(nonde = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# executive non-votes
+spel18g <- spel18g %>% mutate(nong = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+
+# Federal Elections
+
+#lower chamber non-votes
+spel18df <- spel18df%>% mutate(nondf = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+
+# upper chamber non-votes
+spel18s <- spel18s %>% mutate(nons = (QT_VOTOS_BRANCOS + QT_VOTOS_NULOS)/QT_COMPARECIMENTO)
+```
+
+
+
+
+# Descriptive Stats
+
+```{r}
+
+# Calculating the EXPLANATORY VARIABLE: Difference between number of firms between two elections or stock of firms before an election
+
+
+spallest <- spallest %>% 
+  separate(V11, into=c('startyr', 'startmo', 'startday'), sep=c(4,6))
+spallest$styrmo <- paste(spallest$startyr, spallest$startmo)
+spallest$styrmo <- gsub(" ", "", spallest$styrmo)
+spallest$startyr <- as.numeric(spallest$startyr)
+spallest$startyr <- ifelse(spallest$startyr==0, NA, spallest$startyr)
+
+
+spallest$newsimples <- ifelse(spallest$startyr==spallest$simpstyr, spallest$startyr, NA)
+spallest$newsimplesind <- ifelse(spallest$startyr==spallest$simpstyr, 1,0)
+
+
+spallest <- spallest %>% 
+  separate(V7, into=c('cadyr', 'cadmo', 'cadday'), sep=c(4,6))
+spallest$cadyrmo <- paste(spallest$cadyr, spallest$cadmo)
+spallest$cadyrmo <- gsub(" ", "", spallest$styrmo)
+spallest$sitcad <- ifelse(spallest$V6==2 | spallest$V6==3 | spallest$V6==4, 1, 0)
+
+# THIS IS ALL FIRMS
+# to do the same for only mei, all i have to do is subset the dataset by mei and re run the same code, just saving the individual datasets under different object names
+
+spallest$meistyr <- as.numeric(spallest$meistyr)
+spallest$meistyr <- ifelse(spallest$meistyr == 0, NA, spallest$meistyr)
+spallest$mei <- ifelse(spallest$meistyr>0, "MEI", NA)  
+spallest$MEI <- ifelse(spallest$mei=="MEI", 1, 0)
+spallest$MEI <- ifelse(is.na(spallest$MEI), 0, spallest$MEI)
+spallest$MEI <- as.factor(spallest$MEI)
+
+```
+
+
+
+```{r}
+
+library(ggplot2)
+
+meibyyear <- ggplot(spallest, aes(x=meistyr)) + geom_histogram()
+meibyyear
+
+# Every MEI is SIMPLES
+# Not every SIMPLES is MEI
+# So in 2007 there was that huge surge in SIMPLES subscriptions that were necessarily SIMPLES, not MEI because MEI did not exist
+# But it is likely companies that already existed previously and just registered to SIMPLES because it decreased their bureaucracy / taxload
+
+# I am only interested in firms that go from informal to formal, not in firms that were already formal and just adopted this tax scheme.
+
+
+spallest$newsimples <- ifelse(spallest$startyr==spallest$simpstyr, spallest$startyr, NA)
+spallest$newsimplesind <- ifelse(spallest$startyr==spallest$simpstyr, 1,0)
+
+newfirmsperyear <- ggplot(spallest, aes(x=startyr, fill=MEI)) + geom_histogram() + xlim(2000, 2024) + stat_bin(bins=25)
+newfirmsperyear
+
+newfirmspost2008 <- ggplot(spallest, aes(x=startyr, fill=MEI)) + geom_histogram() + xlim(2007, 2024) 
+
+newpersimples <- ggplot(spallest, aes(x=newsimples)) + geom_histogram() + xlim(2006, 2024)
+newpersimples
+
+
+# I am going to assume the MEI as a proxy for a firm that would otherwise be informal
+# I need to figure out how to validate this
+
+# Next step: remove from this MEI count the firms that are people being hired as freelance agents by larger firms so the latter avoid paying worker's rights (like the 13th salary) and additional taxes.
+```
+
+
+
+
+
+
+
+
+
+# BUILDING EXPLANATORY VARIABLES
+
+```{r}
+
+# FIX ALL OF THESE BY styrmo and cadyrmo
+
+### MUNICIPAL ELECTIONS
+
+spallest$flag_stock_00 <- ifelse(spallest$yrmo<200010, 1, 0)
+spallest$flag2_stock_00 <- ifelse(spallest$cadyr<2001 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_00 <- spallest$flag2_stock_00+spallest$flag_stock_00
+stock00 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_00 = sum(count_stock_00)) %>% 
+  ungroup()
+
+spallest$flag_delta_04 <- ifelse(spallest$startyr>2000 & spallest$startyr<2005, 1, 0)
+spallest$flag2_delta_04 <- ifelse(spallest$startyr>2000 & spallest$startyr<2005 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_04 <- spallest$flag2_delta_04+spallest$flag_delta_04
+delta04 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_04 = sum(count_delta_04)) %>% 
+  ungroup()
+
+spallest$flag_stock_04 <- ifelse(spallest$startyr<2005, 1, 0)
+spallest$flag2_stock_04 <- ifelse(spallest$cadyr<2005 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_04 <- spallest$flag2_stock_04+spallest$flag_stock_04
+stock04 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_04 = sum(count_stock_04)) %>% 
+  ungroup()
+
+spallest$flag_delta_08 <- ifelse(spallest$startyr>2004 & spallest$startyr<2009, 1, 0)
+spallest$flag2_delta_08 <- ifelse(spallest$startyr>2004 & spallest$startyr<2009 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_08 <- spallest$flag2_delta_08+spallest$flag_delta_08
+delta08 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_08 = sum(count_delta_08)) %>% 
+  ungroup()
+
+spallest$flag_stock_08 <- ifelse(spallest$startyr<2009, 1, 0)
+spallest$flag2_stock_08 <- ifelse(spallest$cadyr<2009 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_08 <- spallest$flag2_stock_08+spallest$flag_stock_08
+stock08 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_08 = sum(count_stock_08)) %>% 
+  ungroup()
+
+spallest$flag_delta_12 <- ifelse(spallest$startyr>2008 & spallest$startyr<2013, 1, 0)
+spallest$flag2_delta_12 <- ifelse(spallest$startyr>2008 & spallest$startyr<2013 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_12 <- spallest$flag2_delta_12+spallest$flag_delta_12
+spallest$mei_count_delta_12 <- ifelse(spallest$count_delta_12==1 & spallest$MEI==1, 1, 0)
+delta12 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_12 = sum(count_delta_12), mei_delta_12 = sum(mei_count_delta_12)) %>% 
+  ungroup()
+
+spallest$flag_stock_12 <- ifelse(spallest$startyr<2013, 1, 0)
+spallest$flag2_stock_12 <- ifelse(spallest$cadyr<2013 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_12 <- spallest$flag2_stock_12+spallest$flag_stock_12
+spallest$mei_count_stock_12 <- ifelse(spallest$count_stock_12==1 & spallest$MEI==1, 1, 0)
+stock12 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_12 = sum(count_stock_12), mei_stock_12 = sum(mei_count_stock_12)) %>% 
+  ungroup()
+
+
+spallest$flag_delta_16 <- ifelse(spallest$startyr>2012 & spallest$startyr<2017, 1, 0)
+spallest$flag2_delta_16 <- ifelse(spallest$startyr>2012 & spallest$startyr<2017 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_16 <- spallest$flag2_delta_16+spallest$flag_delta_16
+spallest$mei_count_delta_16 <- ifelse(spallest$count_delta_16==1 & spallest$MEI==1, 1, 0)
+delta16 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_16 = sum(count_delta_16), mei_delta_16 = sum(mei_count_delta_16)) %>% 
+  ungroup()
+
+spallest$flag_stock_16 <- ifelse(spallest$startyr<2013, 1, 0)
+spallest$flag2_stock_16 <- ifelse(spallest$cadyr<2013 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_16 <- spallest$flag2_stock_16+spallest$flag_stock_16
+spallest$mei_count_stock_16 <- ifelse(spallest$count_stock_16==1 & spallest$MEI==1, 1, 0)
+stock16 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_16 = sum(count_stock_16), mei_stock_16 = sum(mei_count_stock_16)) %>% 
+  ungroup()
+
+spallest$flag_delta_20 <- ifelse(spallest$startyr>2016 & spallest$startyr<2021, 1, 0)
+spallest$flag2_delta_20 <- ifelse(spallest$startyr>2016 & spallest$startyr<2021 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_20 <- spallest$flag2_delta_20+spallest$flag_delta_20
+spallest$mei_count_delta_20 <- ifelse(spallest$count_delta_20==1 & spallest$MEI==1, 1, 0)
+delta20 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_20 = sum(count_delta_20), mei_delta_20 = sum(mei_count_delta_20)) %>% 
+  ungroup()
+
+spallest$flag_stock_20 <- ifelse(spallest$startyr<2021, 1, 0)
+spallest$flag2_stock_20 <- ifelse(spallest$cadyr<2021 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_20 <- spallest$flag2_stock_20+spallest$flag_stock_20
+spallest$mei_count_stock_20 <- ifelse(spallest$count_stock_20==1 & spallest$MEI==1, 1, 0)
+stock20 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_20 = sum(count_stock_20), mei_stock_20 = sum(mei_count_stock_20)) %>% 
+  ungroup()
+
+
+
+### STATE/FEDERAL ELECTIONS
+
+spallest$flag_stock_02 <- ifelse(spallest$startyr<2003, 1, 0)
+spallest$flag2_stock_02 <- ifelse(spallest$cadyr<2003 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_02 <- spallest$flag2_stock_02+spallest$flag_stock_02
+stock02 <- spallest %>% 
+  group_by(V21) %>%
+  summarise(stock_02 = sum(count_stock_02)) %>% 
+  ungroup()
+
+spallest$flag_delta_06 <- ifelse(spallest$startyr>2002 & spallest$startyr<2007, 1, 0)
+spallest$flag2_delta_06 <- ifelse(spallest$startyr>2002 & spallest$startyr<2007 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_06 <- spallest$flag2_delta_06+spallest$flag_delta_06
+delta06 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_06 = sum(count_delta_06)) %>% 
+  ungroup()
+
+spallest$flag_stock_06 <- ifelse(spallest$startyr<2007, 1, 0)
+spallest$flag2_stock_06 <- ifelse(spallest$cadyr<2007 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_06 <- spallest$flag2_stock_06+spallest$flag_stock_06
+stock06 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_06 = sum(count_stock_06)) %>% 
+  ungroup()
+
+spallest$flag_delta_10 <- ifelse(spallest$startyr>2006 & spallest$startyr<2011, 1, 0)
+spallest$flag2_delta_10 <- ifelse(spallest$startyr>2006 & spallest$startyr<2011 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_10 <- spallest$flag2_delta_10+spallest$flag_delta_10
+delta10 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_10 = sum(count_delta_10)) %>% 
+  ungroup()
+
+spallest$flag_stock_10 <- ifelse(spallest$startyr<2011, 1, 0)
+spallest$flag2_stock_10 <- ifelse(spallest$cadyr<2011 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_10 <- spallest$flag2_stock_10+spallest$flag_stock_10
+stock10 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_10 = sum(count_stock_10)) %>% 
+  ungroup()
+
+spallest$flag_delta_14 <- ifelse(spallest$startyr>2010 & spallest$startyr<2015, 1, 0)
+spallest$flag2_delta_14 <- ifelse(spallest$startyr>2010 & spallest$startyr<2015 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_14 <- spallest$flag2_delta_14+spallest$flag_delta_14
+spallest$mei_count_delta_14 <- ifelse(spallest$count_delta_14==1 & spallest$MEI==1, 1, 0)
+delta14 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_14 = sum(count_delta_14), mei_delta_14 = sum(mei_count_delta_14)) %>% 
+  ungroup()
+
+spallest$flag_stock_14 <- ifelse(spallest$startyr<2015, 1, 0)
+spallest$flag2_stock_14 <- ifelse(spallest$cadyr<2015 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_14 <- spallest$flag2_stock_14+spallest$flag_stock_14
+spallest$mei_count_stock_14 <- ifelse(spallest$count_stock_14==1 & spallest$MEI==1, 1, 0)
+stock14 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_14 = sum(count_stock_14), mei_stock_14 = sum(mei_count_stock_14)) %>% 
+  ungroup()
+
+
+spallest$flag_delta_18 <- ifelse(spallest$startyr>2014 & spallest$startyr<2019, 1, 0)
+spallest$flag2_delta_18 <- ifelse(spallest$startyr>2014 & spallest$startyr<2019 & spallest$sitcad==0, -1, 0)
+spallest$count_delta_18 <- spallest$flag2_delta_18+spallest$flag_delta_18
+spallest$mei_count_delta_18 <- ifelse(spallest$count_delta_18==1 & spallest$MEI==1, 1, 0)
+delta18 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(delta_18 = sum(count_delta_18), mei_delta_18 = sum(mei_count_delta_18)) %>% 
+  ungroup()
+
+spallest$flag_stock_18 <- ifelse(spallest$startyr<2019, 1, 0)
+spallest$flag2_stock_18 <- ifelse(spallest$cadyr<2019 & spallest$sitcad==0, -1, 0)
+spallest$count_stock_18 <- spallest$flag2_stock_18+spallest$flag_stock_18
+spallest$mei_count_stock_18 <- ifelse(spallest$count_stock_18==1 & spallest$MEI==1, 1, 0)
+stock18 <- spallest %>% 
+  group_by(V21) %>% 
+  summarise(stock_18 = sum(count_stock_18), mei_stock_18 = sum(mei_count_stock_18)) %>% 
+  ungroup()
+```
+
+
+The explanatory variable I have in mind is what I call the RFEI, or the _Rate of Formalizing Entrepreneurial Initiative_. For now, the best quantification I can think of for this variable is $\frac{\Delta MEI_t}{Firm Stock_{t-1}}$.
+
+
+```{r}
+## BUILDING THE MUNICIPAL ELECTIONS PANEL
+
+# 2000, 2004, 2008, 2012, 2016, 2020
+
+# Legislative Elections (City Council)
+
+spel00v$e2000 <- 1
+spel00v <- spel00v %>% select(CD_MUNICIPIO, turnout, nonleg, e2000)
+spel00v$e2004 <- 0
+spel00v$e2008 <- 0
+spel00v$e2012 <- 0
+spel00v$e2016 <- 0
+spel00v$e2020 <- 0
+
+spel04v$e2004 <- 1
+spel04v <- spel04v %>% select(CD_MUNICIPIO, turnout, nonleg, e2004)
+spel04v$e2000 <- 0
+spel04v$e2008 <- 0
+spel04v$e2012 <- 0
+spel04v$e2016 <- 0
+spel04v$e2020 <- 0
+
+spel08v$e2008 <- 1
+spel08v <- spel08v %>% select(CD_MUNICIPIO, turnout, nonleg, e2008)
+spel08v$e2000 <- 0
+spel08v$e2004 <- 0
+spel08v$e2012 <- 0
+spel08v$e2016 <- 0
+spel08v$e2020 <- 0
+
+spel12v$e2012 <- 1
+spel12v <- spel12v %>% select(CD_MUNICIPIO, turnout, nonleg, e2012)
+spel12v$e2000 <- 0
+spel12v$e2004 <- 0
+spel12v$e2008 <- 0
+spel12v$e2016 <- 0
+spel12v$e2020 <- 0
+
+spel16v$e2016 <- 1
+spel16v <- spel16v %>% select(CD_MUNICIPIO, turnout, nonleg, e2016)
+spel16v$e2000 <- 0
+spel16v$e2004 <- 0
+spel16v$e2008 <- 0
+spel16v$e2012 <- 0
+spel16v$e2020 <- 0
+
+spel20v$e2020 <- 1
+spel20v <- spel20v %>% select(CD_MUNICIPIO, turnout, nonleg, e2020)
+spel20v$e2000 <- 0
+spel20v$e2004 <- 0
+spel20v$e2008 <- 0
+spel20v$e2016 <- 0
+spel20v$e2012 <- 0
+
+munleg <- rbind(spel00v, spel04v, spel08v, spel12v, spel16v, spel20v)
+muni <- read.csv2("municipios.csv")
+muni <- muni %>% select(cdtom,cdibge)
+muni2 <- read.csv('municipios_brasileiros_tse.csv')
+muni2 <- muni2 %>% select(codigo_tse, codigo_ibge)
+muni3 <- left_join(muni, muni2, by=c('cdibge'='codigo_ibge'))
+
+munleg <- left_join(munleg, muni3, by=c('CD_MUNICIPIO'='codigo_tse'))
+
+stock00$e2000 <- 1
+stock04$e2004 <- 1
+stock08$e2008 <- 1
+stock12$e2012 <- 1
+stock16$e2016 <- 1
+stock20$e2020 <- 1
+
+delta04$e2004 <- 1
+delta08$e2008 <- 1 # between 2004 and 2008
+delta12$e2012 <- 1
+delta16$e2016 <- 1
+delta20$e2020 <- 1
+
+
+stock00$V21 <- as.integer(stock00$V21)
+munleg1 <- left_join(munleg, stock00, by=c('cdtom'='V21', 'e2000'='e2000'))
+
+stock04$V21 <- as.integer(stock04$V21)
+munleg1 <- left_join(munleg1, stock04, by=c('cdtom'='V21', 'e2004'='e2004'))
+
+stock08$V21 <- as.integer(stock08$V21)
+munleg1 <- left_join(munleg1, stock08, by=c('cdtom'='V21', 'e2008'='e2008'))
+
+stock12$V21 <- as.integer(stock12$V21)
+munleg1 <- left_join(munleg1, stock12, by=c('cdtom'='V21', 'e2012'='e2012'))
+
+stock16$V21 <- as.integer(stock16$V21)
+munleg1 <- left_join(munleg1, stock16, by=c('cdtom'='V21', 'e2016'='e2016'))
+
+stock20$V21 <- as.integer(stock20$V21)
+munleg1 <- left_join(munleg1, stock20, by=c('cdtom'='V21', 'e2020'='e2020'))
+
+
+delta04$V21 <- as.integer(delta04$V21)
+munleg1 <- left_join(munleg1, delta04, by=c('cdtom'='V21', 'e2004'='e2004'))
+
+delta08$V21 <- as.integer(delta08$V21)
+munleg1 <- left_join(munleg1, delta08, by=c('cdtom'='V21', 'e2008'='e2008'))
+
+delta12$V21 <- as.integer(delta12$V21)
+munleg1 <- left_join(munleg1, delta12, by=c('cdtom'='V21', 'e2012'='e2012'))
+
+delta16$V21 <- as.integer(delta16$V21)
+munleg1 <- left_join(munleg1, delta16, by=c('cdtom'='V21', 'e2016'='e2016'))
+
+delta20$V21 <- as.integer(delta20$V21)
+munleg1 <- left_join(munleg1, delta20, by=c('cdtom'='V21', 'e2020'='e2020'))
+
+munleg1[is.na(munleg1)] <- 0
+
+munleg1$stock <- munleg1$stock_00 + munleg1$stock_04 + munleg1$stock_08 + munleg1$stock_12 + munleg1$stock_16 + munleg1$stock_20
+munleg1$delta <- munleg1$delta_04 + munleg1$delta_08 + munleg1$stock_12 + munleg1$stock_16 + munleg1$stock_20
+munleg1$mei_delta <- munleg1$mei_delta_12 +  munleg1$mei_delta_16 + munleg1$mei_delta_20
+munleg1$mei_stock <- munleg1$mei_stock_12 + munleg1$mei_stock_16 + munleg1$mei_stock_20
+
+#write.csv(munleg1, 'City council 2000-2020.csv')
+```
+
+
+
+```{r}
+
+## BUILDING THE STATE ELECTIONS PANEL
+
+# 2002, 2006, 2010, 2014, 2018
+
+# Legislative Elections (State Legislature)
+
+spel02de$e2002 <- 1
+spel02de <- spel02de %>% select(CD_MUNICIPIO, turnout, nonde, e2002)
+spel02de$e2006 <- 0
+spel02de$e2010 <- 0
+spel02de$e2014 <- 0
+spel02de$e2018 <- 0
+
+spel06de$e2006 <- 1
+spel06de <- spel06de %>% select(V8, turnout, nonde, e2006)
+spel06de$e2002 <- 0
+spel06de$e2010 <- 0
+spel06de$e2014 <- 0
+spel06de$e2018 <- 0
+
+spel06de <- spel06de %>% rename("CD_MUNICIPIO" = "V8")
+
+spel10de$e2010 <- 1
+spel10de <- spel10de %>% select(CD_MUNICIPIO, turnout, nonde, e2010)
+spel10de$e2006 <- 0
+spel10de$e2002 <- 0
+spel10de$e2014 <- 0
+spel10de$e2018 <- 0
+
+spel14de$e2014 <- 1
+spel14de <- spel14de %>% select(CD_MUNICIPIO, turnout, nonde, e2014)
+spel14de$e2006 <- 0
+spel14de$e2002 <- 0
+spel14de$e2010 <- 0
+spel14de$e2018 <- 0
+
+spel18de$e2018 <- 1
+spel18de <- spel18de %>% select(CD_MUNICIPIO, turnout, nonde, e2018)
+spel18de$e2006 <- 0
+spel18de$e2002 <- 0
+spel18de$e2010 <- 0
+spel18de$e2014 <- 0
+
+
+stateleg <- rbind(spel02de, spel06de, spel10de, spel14de, spel18de)
+stateleg <- left_join(stateleg, muni3, by=c('CD_MUNICIPIO'='codigo_tse'))
+
+stock02$e2002 <- 1
+stock06$e2006 <- 1
+stock10$e2010 <- 1
+stock14$e2014 <- 1
+stock18$e2018 <- 1
+
+delta06$e2006 <- 1
+delta14$e2014 <- 1
+delta18$e2018 <- 1
+delta10$e2010 <- 1
+
+
+stock02$V21 <- as.integer(stock02$V21)
+stateleg1 <- left_join(stateleg, stock02, by=c('cdtom'='V21', 'e2002'='e2002'))
+
+stock06$V21 <- as.integer(stock06$V21)
+stateleg1 <- left_join(stateleg1, stock06, by=c('cdtom'='V21', 'e2006'='e2006'))
+
+stock10$V21 <- as.integer(stock10$V21)
+stateleg1 <- left_join(stateleg1, stock10, by=c('cdtom'='V21', 'e2010'='e2010'))
+
+stock14$V21 <- as.integer(stock14$V21)
+stateleg1 <- left_join(stateleg1, stock14, by=c('cdtom'='V21', 'e2014'='e2014'))
+
+stock18$V21 <- as.integer(stock18$V21)
+stateleg1 <- left_join(stateleg1, stock18, by=c('cdtom'='V21', 'e2018'='e2018'))
+
+
+
+delta06$V21 <- as.integer(delta06$V21)
+stateleg1 <- left_join(stateleg1, delta06, by=c('cdtom'='V21', 'e2006'='e2006'))
+
+delta10$V21 <- as.integer(delta10$V21)
+stateleg1 <- left_join(stateleg1, delta10, by=c('cdtom'='V21', 'e2010'='e2010'))
+
+delta14$V21 <- as.integer(delta14$V21)
+stateleg1 <- left_join(stateleg1, delta14, by=c('cdtom'='V21', 'e2014'='e2014'))
+
+delta18$V21 <- as.integer(delta18$V21)
+stateleg1 <- left_join(stateleg1, delta18, by=c('cdtom'='V21', 'e2018'='e2018'))
+
+stateleg1[is.na(stateleg1)] <- 0
+
+stateleg1$stock <- stateleg1$stock_02 + stateleg1$stock_06 + stateleg1$stock_10 + stateleg1$stock_14 + stateleg1$stock_18 
+stateleg1$delta <- stateleg1$delta_06 + stateleg1$delta_10 + stateleg1$stock_14 + stateleg1$stock_18
+stateleg1$mei_delta <- stateleg1$mei_delta_14 +  stateleg1$mei_delta_18 
+stateleg1$mei_stock <- stateleg1$mei_stock_14 + stateleg1$mei_stock_18
+
+# write.csv(stateleg1, 'State Legislature 2002-2018.csv')
+
+```
+
+
+```{r}
+
+## BUILDING THE FEDERAL ELECTIONS PANEL
+
+# 2002, 2006, 2010, 2014, 2018
+
+# Legislative Elections (Lower Chamber National Congress)
+
+spel02df$e2002 <- 1
+spel02df <- spel02df %>% select(CD_MUNICIPIO, nondf, e2002)
+spel02df$e2006 <- 0
+spel02df$e2010 <- 0
+spel02df$e2014 <- 0
+spel02df$e2018 <- 0
+
+spel06df$e2006 <- 1
+spel06df <- spel06df %>% select(V8, nondf, e2006)
+spel06df$e2002 <- 0
+spel06df$e2010 <- 0
+spel06df$e2014 <- 0
+spel06df$e2018 <- 0
+
+spel06df <- spel06df %>% rename("CD_MUNICIPIO" = "V8")
+
+spel10df$e2010 <- 1
+spel10df <- spel10df %>% select(CD_MUNICIPIO, nondf, e2010)
+spel10df$e2006 <- 0
+spel10df$e2002 <- 0
+spel10df$e2014 <- 0
+spel10df$e2018 <- 0
+
+spel14df$e2014 <- 1
+spel14df <- spel14df %>% select(CD_MUNICIPIO, nondf, e2014)
+spel14df$e2006 <- 0
+spel14df$e2002 <- 0
+spel14df$e2010 <- 0
+spel14df$e2018 <- 0
+
+spel18df$e2018 <- 1
+spel18df <- spel18df %>% select(CD_MUNICIPIO, nondf, e2018)
+spel18df$e2006 <- 0
+spel18df$e2002 <- 0
+spel18df$e2010 <- 0
+spel18df$e2014 <- 0
+
+
+lower <- rbind(spel02df, spel06df, spel10df, spel14df, spel18df)
+lower <- left_join(lower, muni3, by=c('CD_MUNICIPIO'='codigo_tse'))
+
+stock02$e2002 <- 1
+stock06$e2006 <- 1
+stock10$e2010 <- 1
+stock14$e2014 <- 1
+stock18$e2018 <- 1
+
+delta06$e2006 <- 1
+delta14$e2014 <- 1
+delta18$e2018 <- 1
+delta10$e2010 <- 1
+
+
+stock02$V21 <- as.integer(stock02$V21)
+lower1 <- left_join(lower, stock02, by=c('cdtom'='V21', 'e2002'='e2002'))
+
+stock06$V21 <- as.integer(stock06$V21)
+lower1 <- left_join(lower1, stock06, by=c('cdtom'='V21', 'e2006'='e2006'))
+
+stock10$V21 <- as.integer(stock10$V21)
+lower1 <- left_join(lower1, stock10, by=c('cdtom'='V21', 'e2010'='e2010'))
+
+stock14$V21 <- as.integer(stock14$V21)
+lower1 <- left_join(lower1, stock14, by=c('cdtom'='V21', 'e2014'='e2014'))
+
+stock18$V21 <- as.integer(stock18$V21)
+lower1 <- left_join(lower1, stock18, by=c('cdtom'='V21', 'e2018'='e2018'))
+
+
+
+delta06$V21 <- as.integer(delta06$V21)
+lower1 <- left_join(lower1, delta06, by=c('cdtom'='V21', 'e2006'='e2006'))
+
+delta10$V21 <- as.integer(delta10$V21)
+lower1 <- left_join(lower1, delta10, by=c('cdtom'='V21', 'e2010'='e2010'))
+
+delta14$V21 <- as.integer(delta14$V21)
+lower1 <- left_join(lower1, delta14, by=c('cdtom'='V21', 'e2014'='e2014'))
+
+delta18$V21 <- as.integer(delta18$V21)
+lower1 <- left_join(lower1, delta18, by=c('cdtom'='V21', 'e2018'='e2018'))
+
+lower1[is.na(lower1)] <- 0
+
+lower1$stock <- lower1$stock_02 + lower1$stock_06 + lower1$stock_10 + lower1$stock_14 + lower1$stock_18 
+lower1$delta <- lower1$delta_06 + lower1$delta_10 + lower1$stock_14 + lower1$stock_18
+lower1$mei_delta <- lower1$mei_delta_14 +  lower1$mei_delta_18 
+lower1$mei_stock <- lower1$mei_stock_14 + lower1$mei_stock_18
+
+#write.csv(lower1, 'Congress Lower Chamber 2002-2018.csv')
+
+```
+
+
+
